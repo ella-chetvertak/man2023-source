@@ -1,0 +1,48 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'main/css/main.css' %}">
+    <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <header>
+        <div class="header-wrapper">
+            <nav>
+                <a href="{% url 'home' %}">Головна</a>
+                <div class="dropdown">
+                    <a href="{% url 'often' %}" class="wrap-link">Аналіз тексту</a>
+                    <div class="dropdown-menu">
+                        <a href="{% url 'often' %}">Часто/рідко вживані слова</a>
+                        <a href="{% url 'search' %}">Пошук контексту</a>
+                    </div>
+                </div>
+            </nav>
+            <a href="https://t.me/Grooove4life" target="_blank"><i class="fa-brands fa-telegram"></i></a>
+        </div>
+    </header>
+    <main>
+        {% block content %}
+        {% endblock content %}
+    </main>
+    <script src="{% static 'fontawesomefree/js/all.min.js' %}"></script>
+    <script>
+        const textarea = document.getElementById("textar")
+        const fileButton = document.querySelector("input[type='file']")
+
+        fileButton.addEventListener('change', function() {
+            if(this.value){
+                textarea.disabled = true
+            } else {
+                textarea.disabled = false
+            }
+        });
+    </script>
+</body>
+</html>

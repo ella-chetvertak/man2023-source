@@ -1,0 +1,44 @@
+button {
+    width: 120px;
+    height: 40px;
+    outline: 0;
+    font-weight: 600;
+    color: aqua;
+    cursor: pointer;
+    border-radius: 8px;
+    border: 1px #1E434C solid;
+    background-color: #1E434C;
+    transition: all .2s linear;
+    font-family: 'Montserrat', sans-serif;
+}
+
+button:hover {
+    background-color: transparent;
+    color: #1E434C;
+}
+
+.content-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form input, textarea {
+    margin-bottom: 10px;
+}
+
+form textarea {
+    max-width: 400px;
+}
+
+.results {
+    margin-top: 10px;
+}
+
+input[type='text'] {
+    width: 25%;
+}
