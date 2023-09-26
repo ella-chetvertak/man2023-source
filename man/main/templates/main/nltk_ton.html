@@ -1,0 +1,15 @@
+{% extends 'main/layout.html' %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <h1>Аналіз тональності тексту</h1>
+        <form name="oftenForm" action="{% url 'nltk_ton' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {{ form }}
+
+            <button type="submit">Аналізувати</button>
+        </form>
+        <p class="results">{{ info }}</p>
+    </div>
+{% endblock %}

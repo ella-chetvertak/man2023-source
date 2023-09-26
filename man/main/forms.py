@@ -17,3 +17,5 @@ class TextForm(MainForm):
 
 class SearchForm(MainForm):
     name = CharField(widget=TextInput(), label='Пошуковий запит')
+
+
