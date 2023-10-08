@@ -24,6 +24,7 @@
                         <a href="{% url 'nltk_ton' %}">Аналіз тональності тексту</a>
                     </div>
                 </div>
+                <a href="{% url 'settings' %}">Налаштування</a>
             </nav>
             <a href="https://t.me/Grooove4life" target="_blank"><i class="fa-brands fa-telegram"></i></a>
         </div>
@@ -36,14 +37,15 @@
     <script>
         const textarea = document.getElementById("textar")
         const fileButton = document.querySelector("input[type='file']")
-
+        
+        if (fileButton) {
         fileButton.addEventListener('change', function() {
             if(this.value){
                 textarea.disabled = true
             } else {
                 textarea.disabled = false
-            }
-        });
+            }})
+        }
     </script>
 </body>
 </html>

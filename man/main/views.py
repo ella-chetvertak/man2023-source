@@ -1,18 +1,20 @@
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
-from .forms import TextForm, SearchForm, MainForm
+from .forms import TextForm, SearchForm, NLTKForm, SettingsForm
 from nltk.tokenize import sent_tokenize
-import random
 import codecs
-from pathlib import Path
-import os
-
 from .text_an import TextAnalyser
 from .nltk_an import NLTKAnalyse
 
 
 def index(request):
-    return render(request, 'main/index.html')
+    response = render(request, 'main/index.html')
+    check = request.COOKIES.get('check')
+    if check != '1':
+        response.set_cookie('group_size', 5)
+        response.set_cookie('freq', 1)
+        response.set_cookie('check', 1)
+    return response
 
 
 def often(request):
@@ -25,11 +27,12 @@ def often(request):
         if form.is_valid():
             clean_text = form.cleaned_data['text']
             clean_data = form.cleaned_data
-
+            group_size = int(request.COOKIES.get('group_size'))
+            freq = int(request.COOKIES.get('freq'))
             if request.FILES:
-                text_analyse = TextAnalyser(request.FILES['file'], True)
+                text_analyse = TextAnalyser(request.FILES['file'], True, group_size, freq)
             else:
-                text_analyse = TextAnalyser(clean_text, False)
+                text_analyse = TextAnalyser(clean_text, False, group_size, freq)
 
             text_analyse.at_start()
 
@@ -65,11 +68,12 @@ def search(request):
         if form.is_valid():
             clean_text = form.cleaned_data['text']
             clean_data = form.cleaned_data
-
+            group_size = int(request.COOKIES.get('group_size'))
+            freq = int(request.COOKIES.get('freq'))
             if request.FILES:
-                text_analyse = TextAnalyser(request.FILES['file'], True)
+                text_analyse = TextAnalyser(request.FILES['file'], True, group_size, freq)
             else:
-                text_analyse = TextAnalyser(clean_text, False)
+                text_analyse = TextAnalyser(clean_text, False, group_size, freq)
 
             text_analyse.at_start()
 
@@ -94,9 +98,9 @@ def search(request):
 def nltk_ton(request):
     if request.method == 'POST':
         if request.FILES:
-            form = MainForm(request.POST, request.FILES)
+            form = NLTKForm(request.POST, request.FILES)
         else:
-            form = MainForm(request.POST)
+            form = NLTKForm(request.POST)
         print(form.errors)
         if form.is_valid():
             clean_text = form.cleaned_data['text']
@@ -111,10 +115,21 @@ def nltk_ton(request):
                 file.close()
 
             sentencesOut = sent_tokenize(clean_text)
-            nltk_analyse = NLTKAnalyse(sentencesOut)
 
-            clean_text = nltk_analyse.get_every_analyse() + '<br><br>'
-            clean_text += "%.2f" % nltk_analyse.aver_percent + ' %'
+            min_ton = clean_data['min_ton']
+            max_ton = clean_data['max_ton']
+
+            if clean_data['min_ton'] == '':
+                min_ton = 0
+            if clean_data['min_ton'] == '':
+                max_ton = 100
+
+            nltk_analyse = NLTKAnalyse(sentencesOut, min_ton, max_ton)
+
+            every_ton = nltk_analyse.get_every_analyse()
+
+            clean_text = "Загальна тональність тексту (без урахування обмежень): " + "%.2f" % nltk_analyse.aver_percent + ' %' + '<br><br>'
+            clean_text += every_ton
             clean_text = mark_safe(clean_text)
 
             data = {
@@ -127,6 +142,58 @@ def nltk_ton(request):
             }
         return render(request, 'main/nltk_ton.html', data)
     else:
-        form = MainForm()
+        form = NLTKForm()
 
     return render(request, 'main/nltk_ton.html', {"form": form})
+
+
+def reset_settings(request):
+    form = SettingsForm()
+    data = {
+        'form': form,
+        'info': 'Дані зкинуто до початкових налаштувань'
+    }
+    response = render(request, 'main/settings.html', data)
+    response.set_cookie('group_size', 5)
+    response.set_cookie('freq', 1)
+    return response
+
+
+def settings(request):
+    if request.method == 'POST':
+        form = SettingsForm(request.POST)
+        if form.is_valid():
+            clean_data = form.cleaned_data
+            if clean_data['group_size']:
+                group_size = int(clean_data['group_size'])
+            if clean_data['freq']:
+                freq = int(clean_data['freq'])
+            data = {
+                'form': form,
+                'info': 'Дані збережені',
+            }
+        else:
+            group_size = 5
+            freq = 1
+            data = {
+                'form': 'Not valid'
+            }
+        response = render(request, 'main/settings.html', data)
+        if clean_data['group_size']:
+            response.set_cookie("group_size", group_size)
+        if clean_data['freq']:
+            response.set_cookie("freq", freq)
+        return response
+    elif request.method == 'UPDATE':
+        form = SettingsForm()
+        data = {
+            'form': form,
+            'info': 'Дані зкинуто до початкових налаштувань',
+        }
+        response = render(request, 'main/settings.html', data)
+        response.set_cookie('group_size', 5)
+        response.set_cookie('freq', 1)
+        return response
+    else:
+        form = SettingsForm()
+    return render(request, 'main/settings.html', {"form": form})

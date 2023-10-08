@@ -3,7 +3,7 @@ from operator import itemgetter
 
 
 class TextAnalyser:
-    def __init__(self, data, with_file):
+    def __init__(self, data, with_file, group_size, freq):
         self.resultsPop = []
         self.resultsRare = []
         self.resCtx = ''
@@ -13,8 +13,8 @@ class TextAnalyser:
         self.data = data
         self.text = []
         self.withFile = with_file
-        self.groupSize = 5
-        self.elemFreq = 1
+        self.groupSize = group_size
+        self.elemFreq = freq
 
     def filter_text(self, data):
         wordsArr = []
@@ -128,9 +128,7 @@ class TextAnalyser:
                     if sortEl[word] != 0:
                         resultsPop += f'{word}: {sortEl[word]}<br>'
             resultsPop += '<br>'
-            # results = results + f'{sortEl}' + '\n\n'
             maxLen -= 1
-        # виводимо результат за допомогою f-строк
         self.resultsPop = resultsPop
 
     def analyse_rare(self):
@@ -139,7 +137,6 @@ class TextAnalyser:
         elemCount = 1
         for elem in self.sortedArr:
             # задаємо довжину слова, також якщо попереднє слово дорівнює нинішньому, прибавляємо лічильник на 1
-            length = len(prevElem)
             if prevElem == elem:
                 elemCount += 1
             else:
@@ -152,7 +149,7 @@ class TextAnalyser:
         for element in rareWords:
             res1 = re.findall(r'[A-Za-z\-]', element)
             if len(res1) < len(element) and len(res1) != 0 and list(set(res1)) != ['-']:
-                results += element + f"(анг/укр {res1}), "
+                results += element + f"(анг {res1}), "
             else:
                 if element != '':
                     results += element + ', '

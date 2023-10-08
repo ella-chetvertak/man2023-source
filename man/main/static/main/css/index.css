@@ -1,5 +1,13 @@
-.analyse-wrapper {
-    width: 75%;
-    text-align: center;
-    margin: 0 auto;
+.analyse-wrapper p {
+    margin-bottom: 20px;
+}
+
+.analyse-wrapper h2 {
+    margin-bottom: 10px;
+}
+
+.exception-ul {
+    list-style: disc;
+    list-style-position: inside;
+    margin-bottom: 20px;
 }

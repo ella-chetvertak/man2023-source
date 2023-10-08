@@ -42,3 +42,7 @@ form textarea {
 input[type='text'] {
     width: 25%;
 }
+
+input.minmax-input {
+    width: 50px;
+}

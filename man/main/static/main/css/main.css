@@ -52,6 +52,10 @@ header {
     justify-content: center;
 }
 
+ul {
+    list-style: none;
+}
+
 .header-wrapper {
     width: 85%;
     height: 70px;
@@ -96,4 +100,8 @@ header {
 
 .fa-telegram:hover {
     color: #54a2d6;
+}
+
+form[name='settingsForm'] {
+    margin-bottom: 10px;
 }

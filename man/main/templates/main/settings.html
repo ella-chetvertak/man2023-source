@@ -1,0 +1,23 @@
+{% extends 'main/layout.html' %}
+
+{% block content %}
+    <div class="content-wrapper">
+        <h1>Налаштування</h1>
+        <form name="settingsForm" action="{% url 'settings' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {{ form }}
+            
+            <button type="submit">Зберегти</button>
+        </form>
+        <form name="resetForm" action="{% url 'reset_settings' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <button type="submit">Reset</button>
+        </form>
+        <p class="results">{{ info }}</p>
+    </div>
+{% endblock %}
+
+{% block title %}
+    Налаштування
+{% endblock %}

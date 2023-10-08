@@ -14,10 +14,12 @@ stop_words = frozenset(stopwords + list(string.punctuation))
 
 
 class NLTKAnalyse:
-    def __init__(self, sentences):
+    def __init__(self, sentences, min_ton, max_ton):
         self.sentences = sentences
         self.aver_polarity = 0
         self.aver_percent = 0
+        self.min = min_ton
+        self.max = max_ton
 
     def get_every_analyse(self):
         total = ''
@@ -31,11 +33,15 @@ class NLTKAnalyse:
                 p = morph.parse(token)[0]
                 normal_words.append(p.normal_form)
 
-            polarity = SIA.polarity_scores(' '.join(normal_words))["compound"]
-            total += f'{sentence} ({polarity}) '
+            polarity = SIA.polarity_scores(' '.join(normal_words))["compound"] * 100
+            if int(self.max) > int(polarity) > int(self.min):
+                total += f'{sentence} ({"%.2f" % polarity} %) '
             all_polarities.append(polarity)
 
-        self.aver_polarity = sum(all_polarities)/len(all_polarities)
+        if len(all_polarities) != 0:
+            self.aver_polarity = sum(all_polarities)/(len(all_polarities)*100)
+        else:
+            self.aver_polarity = 0
         self.aver_percent = self.aver_polarity * 100
 
         return total
