@@ -1,5 +1,6 @@
 import codecs, re
 from operator import itemgetter
+from nltk.tokenize import sent_tokenize
 
 
 class TextAnalyser:
@@ -19,19 +20,9 @@ class TextAnalyser:
     def filter_text(self, data):
         wordsArr = []
         self.text = []
-        count = 0
-        lastC = 0
         self.ctxLineArr = []
         if not self.withFile:
-            for c in range(len(data)):
-                if data[c] == ' ':
-                    count += 1
-                if count == 10:
-                    self.text.append(data[lastC:c].strip())
-                    lastC = c
-                    count = 0
-                if c == len(data) - 1:
-                    self.text.append(data[lastC:c+1].strip())
+            self.text = sent_tokenize(data)
         else:
             with open("textForm.txt", "wb+") as destination:
                 for chunk in data.chunks():

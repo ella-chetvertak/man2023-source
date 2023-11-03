@@ -33,19 +33,7 @@
         {% block content %}
         {% endblock content %}
     </main>
+    <script type="text/javascript" src="{% static 'main/js/script.js' %}"></script>
     <script src="{% static 'fontawesomefree/js/all.min.js' %}"></script>
-    <script>
-        const textarea = document.getElementById("textar")
-        const fileButton = document.querySelector("input[type='file']")
-        
-        if (fileButton) {
-        fileButton.addEventListener('change', function() {
-            if(this.value){
-                textarea.disabled = true
-            } else {
-                textarea.disabled = false
-            }})
-        }
-    </script>
 </body>
 </html>

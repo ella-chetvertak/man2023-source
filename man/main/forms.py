@@ -1,10 +1,11 @@
 from django.forms import Form, Textarea, TextInput, CharField, FileField, RadioSelect
+from .validators import validate_file_extension
 
 
 class MainForm(Form):
     text = CharField(label='', widget=Textarea(
         attrs={'placeholder': 'Текст, який буде аналізуватись', 'rows': 10, 'id': 'textar'}), required=False)
-    file = FileField(label='', required=False)
+    file = FileField(label='', validators=[validate_file_extension], required=False)
 
 
 class TextForm(MainForm):

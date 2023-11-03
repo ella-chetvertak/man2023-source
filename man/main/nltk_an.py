@@ -27,7 +27,7 @@ class NLTKAnalyse:
 
         for sentence in self.sentences:
             words = word_tokenize(sentence)
-            without_stop_words = [word for word in words if not word in stop_words]
+            without_stop_words = [word for word in words if word not in stop_words]
             normal_words = []
             for token in without_stop_words:
                 p = morph.parse(token)[0]

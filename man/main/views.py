@@ -5,6 +5,7 @@ from nltk.tokenize import sent_tokenize
 import codecs
 from .text_an import TextAnalyser
 from .nltk_an import NLTKAnalyse
+import re
 
 
 def index(request):
@@ -49,7 +50,8 @@ def often(request):
             }
         else:
             data = {
-                'form': 'Not valid'
+                'form': TextForm(),
+                'info': form.errors,
             }
         return render(request, 'main/often.html', data)
     else:
@@ -77,8 +79,11 @@ def search(request):
 
             text_analyse.at_start()
 
-            text_analyse.search_ctx(clean_data['name'])
-            clean_text = mark_safe(text_analyse.resCtx)
+            name = clean_data['name']
+            text_analyse.search_ctx(name)
+            clean_text = text_analyse.resCtx
+            clean_text = re.sub(name, f'<mark>{name}</mark>', clean_text)
+            clean_text = mark_safe(clean_text)
 
             data = {
                 'form': form,
@@ -86,7 +91,8 @@ def search(request):
             }
         else:
             data = {
-                'form': 'Not valid'
+                'form': SearchForm(),
+                'info': form.errors,
             }
         return render(request, 'main/search.html', data)
     else:
@@ -101,7 +107,6 @@ def nltk_ton(request):
             form = NLTKForm(request.POST, request.FILES)
         else:
             form = NLTKForm(request.POST)
-        print(form.errors)
         if form.is_valid():
             clean_text = form.cleaned_data['text']
             clean_data = form.cleaned_data
@@ -138,7 +143,8 @@ def nltk_ton(request):
             }
         else:
             data = {
-                'form': 'Not valid'
+                'form': NLTKForm(),
+                'info': form.errors,
             }
         return render(request, 'main/nltk_ton.html', data)
     else:
@@ -176,7 +182,8 @@ def settings(request):
             group_size = 5
             freq = 1
             data = {
-                'form': 'Not valid'
+                'form': SettingsForm(),
+                'info': form.errors,
             }
         response = render(request, 'main/settings.html', data)
         if clean_data['group_size']:
