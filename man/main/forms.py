@@ -6,6 +6,7 @@ class MainForm(Form):
     text = CharField(label='', widget=Textarea(
         attrs={'placeholder': 'Текст, який буде аналізуватись', 'rows': 10, 'id': 'textar'}), required=False)
     file = FileField(label='', validators=[validate_file_extension], required=False)
+    file.widget.attrs['id'] = 'filear'
 
 
 class TextForm(MainForm):

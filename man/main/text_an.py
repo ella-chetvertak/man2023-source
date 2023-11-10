@@ -21,7 +21,11 @@ class TextAnalyser:
         wordsArr = []
         self.text = []
         self.ctxLineArr = []
-        if not self.withFile:
+        if not self.withFile and not data:
+            file = codecs.open('textForm.txt', "r", "utf-8")
+            self.text = file.read().splitlines()
+            file.close()
+        elif not self.withFile:
             self.text = sent_tokenize(data)
         else:
             with open("textForm.txt", "wb+") as destination:
@@ -155,6 +159,7 @@ class TextAnalyser:
             try:
                 resOne = self.text[self.ctxLineArr[elem]]
             except IndexError:
-                print('Not Found')
+                print('Biective ruined')
                 resOne = ''
-            self.resCtx += resOne + "<br><br>"
+            if resOne not in self.resCtx:
+                self.resCtx += resOne + "<br><br>"

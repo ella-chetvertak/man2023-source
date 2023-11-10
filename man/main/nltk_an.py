@@ -43,5 +43,4 @@ class NLTKAnalyse:
         else:
             self.aver_polarity = 0
         self.aver_percent = self.aver_polarity * 100
-
         return total

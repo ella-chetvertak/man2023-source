@@ -43,6 +43,11 @@ input[type='text'] {
     width: 25%;
 }
 
+input[type='file'] {
+    color: transparent;
+    width: 118px;
+}
+
 input.minmax-input {
     width: 50px;
 }

@@ -6,7 +6,11 @@
         <form name="oftenForm" action="{% url 'search' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
-            {{ form }}
+            {{ form.text }}
+            <p class="file-info"></p>
+            {{ form.file }}
+            {{ form.name.label }}
+            {{ form.name }}
 
             <button type="submit">Аналізувати</button>
         </form>

@@ -6,7 +6,13 @@
         <form name="oftenForm" action="{% url 'nltk_ton' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
-            {{ form }}
+            {{ form.text }}
+            <p class="file-info"></p>
+            {{ form.file }}
+            {{ form.min_ton.label }}
+            {{ form.min_ton }}
+            {{ form.max_ton.label }}
+            {{ form.max_ton }}
 
             <button type="submit">Аналізувати</button>
         </form>

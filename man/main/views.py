@@ -82,7 +82,9 @@ def search(request):
             name = clean_data['name']
             text_analyse.search_ctx(name)
             clean_text = text_analyse.resCtx
-            clean_text = re.sub(name, f'<mark>{name}</mark>', clean_text)
+            all_entries = set(re.findall(fr'(?i){name}', clean_text))
+            for elem in all_entries:
+                clean_text = re.sub(elem, f'<mark>{elem}</mark>', clean_text)
             clean_text = mark_safe(clean_text)
 
             data = {
@@ -118,6 +120,10 @@ def nltk_ton(request):
                 file = codecs.open('textForm.txt', "r", "utf-8")
                 clean_text = file.read()
                 file.close()
+            elif not clean_text:
+                file = codecs.open('textForm.txt', "r", "utf-8")
+                clean_text = file.read()
+                file.close()
 
             sentencesOut = sent_tokenize(clean_text)
 
@@ -126,7 +132,7 @@ def nltk_ton(request):
 
             if clean_data['min_ton'] == '':
                 min_ton = 0
-            if clean_data['min_ton'] == '':
+            if clean_data['max_ton'] == '':
                 max_ton = 100
 
             nltk_analyse = NLTKAnalyse(sentencesOut, min_ton, max_ton)
