@@ -51,3 +51,13 @@ input[type='file'] {
 input.minmax-input {
     width: 50px;
 }
+
+table {
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 20px;
+    border: 1px #000 solid;
+}

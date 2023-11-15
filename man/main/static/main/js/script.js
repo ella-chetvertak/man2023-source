@@ -8,6 +8,16 @@ try {
     console.log('catched')
 }
 
+if (textarea) {
+textarea.addEventListener('input', function() {
+    if (this.value) {
+        fileButton.disabled = true
+    } else {
+        fileButton.disabled = false
+    }
+})
+}
+
 if (fileButton) {
 fileButton.addEventListener('change', function() {
     if (this.value) {

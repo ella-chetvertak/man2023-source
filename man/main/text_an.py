@@ -42,37 +42,44 @@ class TextAnalyser:
                 self.ctxLineArr.append(i)
         # робимо з двухетажного масиву одноетажний
         flatArr = [item for sublist in wordsArr for item in sublist]
-        for i in range(len(flatArr)):
+        restr = r"[^A-Za-zА-Яа-яіІїЇёЁєЄ0-9\[\]]"
+        i = 0
+        while i < len(flatArr):
             # фільтрація символів
-
-            index = ""
-            flatArr[i] = flatArr[i].casefold()
-            if "-" in flatArr[i]:
-                index = flatArr[i].index("-")
-                if flatArr[i][-1] != "-" and flatArr[i][0] != "-":
-                    # перевіряємо за допомогою regexp, чи знаходиться тире між двома буквами
-                    reStr = r"/w"
-                    prevPosMatch = re.findall(reStr, flatArr[i][index - 1])
-                    nextPosMatch = re.findall(reStr, flatArr[i][index + 1])
-                    if len(prevPosMatch) != 0 and len(nextPosMatch) != 0:
-                        # якщо ні, видаляємо тире
-                        flatArr[i] = flatArr[i].replace("-", "")
-                    if flatArr[i][index - 1] == ".":
-                        # якщо бачимо, що перед тире є скорочення, анігілюємо частину до тире включно
-                        flatArr[i] = flatArr[i].replace(flatArr[i][: index + 1], "")
+            isAdded = False
+            if '[' in flatArr[i] and ']' in flatArr[i]:
+                findex = flatArr[i].index('[')
+                sindex = flatArr[i].index(']')
+                brakes = flatArr[i][findex:sindex + 1]
+                if sindex < findex:
+                    flatArr[i] = re.sub(r'[\[\]]', '', flatArr[i])
                 else:
-                    # якщо тире на кінці або у початку слова, просто його видаляємо
-                    flatArr[i] = flatArr[i].replace("-", "")
-            # очищаємо слова від усього, окрім букв, цифр і тире за допомогою regexp
-            flatArr[i] = re.sub(r"[^A-Za-zА-Яа-яіІїЇёЁєЄ\-]", "", flatArr[i])
-
-            # перевірка на англійські символи в не англійському слові
-
-            # таким чином ми дозволяємо бути словам з тире поміж двох букв, наприклад злато-серебро, і одночасно
-            # виключаємо випадок із скороченням
-        self.cleanArr = flatArr
-
+                    flatArr[i] = flatArr[i].replace(brakes, '')
+                    flatArr.insert(i + 1, brakes)
+                    self.ctxLineArr.insert(i + 1, self.ctxLineArr[i])
+                    isAdded = True
+            elif '[' in flatArr[i] or ']' in flatArr[i]:
+                flatArr[i] = re.sub(r'[\[\]]', '', flatArr[i])
+            flatArr[i] = flatArr[i].casefold()
+            if flatArr[i] != '':
+                first = re.findall(restr, flatArr[i][0])
+                second = re.findall(restr, flatArr[i][-1])
+            else:
+                first = ''
+                second = ''
+            while first and len(flatArr[i]) > 1:
+                flatArr[i] = flatArr[i][1:]
+                first = re.findall(restr, flatArr[i][0])
+            while second and len(flatArr[i]) > 1:
+                flatArr[i] = flatArr[i][0:len(flatArr[i]) - 1]
+                second = re.findall(restr, flatArr[i][-1])
+            if isAdded:
+                i += 2
+                isAdded = False
+            else:
+                i += 1
         # сортуємо отриманий масив із чистих слів
+        self.cleanArr = flatArr
         self.sortedArr = sorted(flatArr)
         self.sortedArr.append('')
 
@@ -110,20 +117,15 @@ class TextAnalyser:
                         break
                 elemCount = 1
             prevElem = elem
-        resultsPop = ''
+        resultsPop = '<table><tr><td>Довжина слова</td><td>Слово</td><td>Частотність слова</td></tr>'
         for elem in reversed(word):
             sortEl = dict(sorted(elem.items(), key=itemgetter(1), reverse=True))
-
-            resultsPop += f'Довжина слова {maxLen}<br>'
-
-            if len(sortEl) == 1 and list(sortEl.values())[0] == 0:
-                resultsPop += 'Слів не знайдено<br>'
-            else:
+            if len(sortEl) != 1:
                 for word in sortEl.keys():
                     if sortEl[word] != 0:
-                        resultsPop += f'{word}: {sortEl[word]}<br>'
-            resultsPop += '<br>'
+                        resultsPop += f'<tr><td>{maxLen}</td><td>{word}</td><td>{sortEl[word]}</td></tr>'
             maxLen -= 1
+        resultsPop += '</table>'
         self.resultsPop = resultsPop
 
     def analyse_rare(self):
@@ -152,7 +154,6 @@ class TextAnalyser:
 
     def search_ctx(self, req):
         idx = [x[0] for x in enumerate(self.cleanArr) if x[1] == req]
-
         self.resCtx = ""
         for elem in idx:
             # запис
