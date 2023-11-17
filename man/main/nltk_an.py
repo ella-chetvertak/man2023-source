@@ -1,4 +1,4 @@
-import nltk, csv, requests, string, math, pymorphy3
+import nltk, string, pymorphy3
 from nltk import pos_tag
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
@@ -22,9 +22,8 @@ class NLTKAnalyse:
         self.max = max_ton
 
     def get_every_analyse(self):
-        total = ''
+        total = '<table><tr><td>Частина тексту</td><td>Тональність</td></tr>'
         all_polarities = []
-
         for sentence in self.sentences:
             words = word_tokenize(sentence)
             without_stop_words = [word for word in words if word not in stop_words]
@@ -35,8 +34,9 @@ class NLTKAnalyse:
 
             polarity = SIA.polarity_scores(' '.join(normal_words))["compound"] * 100
             if int(self.max) > int(polarity) > int(self.min):
-                total += f'{sentence} ({"%.2f" % polarity} %) '
+                total += f'<tr><td>{sentence}</td><td>{"%.2f" % polarity}%</td></tr>'
             all_polarities.append(polarity)
+        total += '</table>'
 
         if len(all_polarities) != 0:
             self.aver_polarity = sum(all_polarities)/(len(all_polarities)*100)

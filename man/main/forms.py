@@ -22,8 +22,8 @@ class SearchForm(MainForm):
 
 
 class NLTKForm(MainForm):
-    min_ton = CharField(widget=TextInput(attrs={'class': 'minmax-input'}), label='Мінімальний настрій (у процентах від -100 до 100)', required=False)
-    max_ton = CharField(widget=TextInput(attrs={'class': 'minmax-input'}), label='Максимальний настрій', required=False)
+    min_ton = CharField(widget=TextInput(attrs={'class': 'minmax-input'}), label='Мінімальний настрій (у процентах від -100 до 100) (за зам. -100%)', required=False)
+    max_ton = CharField(widget=TextInput(attrs={'class': 'minmax-input'}), label='Максимальний настрій (за зам. 100%)', required=False)
 
 
 class SettingsForm(Form):
