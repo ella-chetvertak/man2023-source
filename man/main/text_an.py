@@ -1,4 +1,4 @@
-import codecs, re
+import re, random, os, codecs
 from operator import itemgetter
 from nltk.tokenize import sent_tokenize
 
@@ -21,19 +21,17 @@ class TextAnalyser:
         wordsArr = []
         self.text = []
         self.ctxLineArr = []
-        if not self.withFile and not data:
-            file = codecs.open('textForm.txt', "r", "utf-8")
-            self.text = file.read().splitlines()
-            file.close()
-        elif not self.withFile:
-            self.text = sent_tokenize(data)
-        else:
-            with open("textForm.txt", "wb+") as destination:
+        randkey = random.randint(100000, 999999)
+        if self.withFile:
+            with open(f"{randkey}.txt", "wb+") as file:
                 for chunk in data.chunks():
-                    destination.write(chunk)
-            file = codecs.open('textForm.txt', "r", "utf-8")
+                    file.write(chunk)
+            file = codecs.open(f"{randkey}.txt", "r", "utf-8")
             self.text = file.read().splitlines()
             file.close()
+            os.remove(f"{randkey}.txt")
+        else:
+            self.text = sent_tokenize(data)
 
         for i in range(len(self.text)):
             lst = self.text[i].split(" ")

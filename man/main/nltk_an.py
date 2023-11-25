@@ -3,6 +3,7 @@ from nltk import pos_tag
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import codecs, random, os
 
 nltk.data.path.extend(["C:\\front end 13 08\\djangoMAN/nltk_data", "/home/olegchetvertak/man2023-source/nltk_data"])
 
@@ -14,12 +15,32 @@ stop_words = frozenset(stopwords + list(string.punctuation))
 
 
 class NLTKAnalyse:
-    def __init__(self, sentences, min_ton, max_ton):
-        self.sentences = sentences
+    def __init__(self, data, with_file, min_ton, max_ton):
+        self.sentences = []
         self.aver_polarity = 0
         self.aver_percent = 0
         self.min = min_ton
         self.max = max_ton
+        self.withFile = with_file
+        self.data = data
+
+    def filter_text(self):
+        randkey = random.randint(100000, 999999)
+        if self.withFile:
+            with open(f"{randkey}.txt", "wb+") as file:
+                for chunk in self.data.chunks():
+                    file.write(chunk)
+            file = codecs.open(f"{randkey}.txt", "r", "utf-8")
+            parts = file.read().splitlines()
+            for elem in parts:
+                self.sentences.extend(sent_tokenize(elem))
+            file.close()
+            os.remove(f"{randkey}.txt")
+        else:
+            self.sentences = sent_tokenize(self.data)
+
+    def at_start(self):
+        self.filter_text()
 
     def get_every_analyse(self):
         total = '<table><tr><td>Частина тексту</td><td>Тональність</td></tr>'

@@ -3,7 +3,7 @@
 {% block content %}
     <div class="content-wrapper">
         <h1>Пошук тексту</h1>
-        <form name="oftenForm" action="{% url 'search' %}" method="post" enctype="multipart/form-data">
+        <form name="searchForm" action="{% url 'search' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
             {{ form.text }}

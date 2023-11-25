@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
+from django.http import HttpResponse
 from .forms import TextForm, SearchForm, NLTKForm, SettingsForm
 from nltk.tokenize import sent_tokenize
-import codecs
 from .text_an import TextAnalyser
 from .nltk_an import NLTKAnalyse
 import re
@@ -18,22 +18,33 @@ def index(request):
     return response
 
 
+def summarise(request, clean_text, group_size, freq):
+    text_analyse = None
+    if request.FILES:
+        text_analyse = TextAnalyser(request.FILES['file'], True, group_size, freq)
+    elif clean_text:
+        text_analyse = TextAnalyser(clean_text, False, group_size, freq)
+    return text_analyse
+
+
 def often(request):
     if request.method == 'POST':
         if request.FILES:
             form = TextForm(request.POST, request.FILES)
         else:
             form = TextForm(request.POST)
-        print(form.errors)
         if form.is_valid():
             clean_text = form.cleaned_data['text']
             clean_data = form.cleaned_data
             group_size = int(request.COOKIES.get('group_size'))
             freq = int(request.COOKIES.get('freq'))
-            if request.FILES:
-                text_analyse = TextAnalyser(request.FILES['file'], True, group_size, freq)
-            else:
-                text_analyse = TextAnalyser(clean_text, False, group_size, freq)
+            text_analyse = summarise(request, clean_text, group_size, freq)
+            if not text_analyse:
+                data = {
+                    'form': form,
+                    'info': 'Введіть текст або оберіть файл',
+                }
+                return render(request, 'main/often.html', data)
 
             text_analyse.at_start()
 
@@ -72,10 +83,13 @@ def search(request):
             clean_data = form.cleaned_data
             group_size = int(request.COOKIES.get('group_size'))
             freq = int(request.COOKIES.get('freq'))
-            if request.FILES:
-                text_analyse = TextAnalyser(request.FILES['file'], True, group_size, freq)
-            else:
-                text_analyse = TextAnalyser(clean_text, False, group_size, freq)
+            text_analyse = summarise(request, clean_text, group_size, freq)
+            if not text_analyse:
+                data = {
+                    'form': form,
+                    'info': 'Введіть текст або оберіть файл',
+                }
+                return render(request, 'main/search.html', data)
 
             text_analyse.at_start()
 
@@ -113,29 +127,20 @@ def nltk_ton(request):
             clean_text = form.cleaned_data['text']
             clean_data = form.cleaned_data
 
-            if request.FILES:
-                with open("textForm.txt", "wb+") as destination:
-                    for chunk in request.FILES['file'].chunks():
-                        destination.write(chunk)
-                file = codecs.open('textForm.txt', "r", "utf-8")
-                clean_text = file.read()
-                file.close()
-            elif not clean_text:
-                file = codecs.open('textForm.txt', "r", "utf-8")
-                clean_text = file.read()
-                file.close()
-
-            sentencesOut = sent_tokenize(clean_text)
-
             min_ton = clean_data['min_ton']
             max_ton = clean_data['max_ton']
 
             if clean_data['min_ton'] == '':
-                min_ton = 0
+                min_ton = -100
             if clean_data['max_ton'] == '':
                 max_ton = 100
 
-            nltk_analyse = NLTKAnalyse(sentencesOut, min_ton, max_ton)
+            if request.FILES:
+                nltk_analyse = NLTKAnalyse(request.FILES['file'], True, min_ton, max_ton)
+            elif clean_text:
+                nltk_analyse = NLTKAnalyse(clean_text, False, min_ton, max_ton)
+
+            nltk_analyse.at_start()
 
             every_ton = nltk_analyse.get_every_analyse()
 

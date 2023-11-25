@@ -2,11 +2,7 @@ const textarea = document.getElementById("textar")
 const fileButton = document.getElementById("filear")
 const para = document.querySelector('.file-info')
 
-try {
-    para.textContent = localStorage.getItem('is_chosen')
-} catch (SyntaxError) {
-    console.log('catched')
-}
+para.textContent = 'Файл не обрано'
 
 if (textarea) {
 textarea.addEventListener('input', function() {
@@ -29,11 +25,10 @@ fileButton.addEventListener('change', function() {
     const curFiles = fileButton.files
 
     if (curFiles.length === 0) {
-        localStorage.setItem('is_chosen', 'Файл не обрано')
+        para.textContent = 'Файл не обрано'
     } else {
-        localStorage.setItem('is_chosen', `Обрано файл ${curFiles[0].name}`)
+        para.textContent = `Обрано файл ${curFiles[0].name}`
     }
-    para.textContent = localStorage.getItem('is_chosen')
 })}
 // window.addEventListener('contextmenu', (e) => {
 //     e.preventDefault()
