@@ -17,5 +17,47 @@
             <button type="submit">Аналізувати</button>
         </form>
         <p class="results">{{ info }}</p>
+        <canvas id="dataChart" aria-label="mood graph" role="img"></canvas>
+        <p></p>
     </div>
+{% endblock %}
+{% block misc_js %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('dataChart')
+        try {
+            const data = JSON.parse("{{data|escapejs}}");
+            for(var x in data){ 
+                console.log(x, data[x])
+            }
+            ctx.style.display = 'block'
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.totalX,
+                    datasets: [{
+                        label: 'Кількість речень',
+                        data: data.totalY,
+                        borderWidth: 1,
+                        backgroundColor: '#242424',
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        },
+                        x: {
+                        }
+                    }
+                }
+            });
+        } catch (e) {
+            console.log('caught', e)
+        }
+    </script>
+{% endblock %}
+
+{% block title %}
+    Аналіз тональності тексту
 {% endblock %}

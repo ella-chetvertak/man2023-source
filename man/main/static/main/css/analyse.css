@@ -61,3 +61,7 @@ td {
     padding: 20px;
     border: 1px #000 solid;
 }
+
+#dataChart {
+    display: none;
+}

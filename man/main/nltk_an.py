@@ -43,7 +43,8 @@ class NLTKAnalyse:
         self.filter_text()
 
     def get_every_analyse(self):
-        total = '<table><tr><td>Частина тексту</td><td>Тональність</td></tr>'
+        totalY = [0 for _ in range(-100, 101, 10)]
+        totalX = [f'{i} %' for i in range(-100, 101, 10)]
         all_polarities = []
         for sentence in self.sentences:
             words = word_tokenize(sentence)
@@ -53,15 +54,14 @@ class NLTKAnalyse:
                 p = morph.parse(token)[0]
                 normal_words.append(p.normal_form)
 
-            polarity = SIA.polarity_scores(' '.join(normal_words))["compound"] * 100
-            if int(self.max) > int(polarity) > int(self.min):
-                total += f'<tr><td>{sentence}</td><td>{"%.2f" % polarity}%</td></tr>'
+            polarity = round(SIA.polarity_scores(' '.join(normal_words))["compound"]*10)*10
+            if int(self.max) >= int(polarity) >= int(self.min):
+                totalY[totalX.index(f'{polarity} %')] += 1
             all_polarities.append(polarity)
-        total += '</table>'
 
         if len(all_polarities) != 0:
             self.aver_polarity = sum(all_polarities)/(len(all_polarities)*100)
         else:
             self.aver_polarity = 0
         self.aver_percent = self.aver_polarity * 100
-        return total
+        return totalX, totalY

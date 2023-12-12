@@ -6,6 +6,7 @@ from nltk.tokenize import sent_tokenize
 from .text_an import TextAnalyser
 from .nltk_an import NLTKAnalyse
 import re
+from json import dumps
 
 
 def index(request):
@@ -117,6 +118,15 @@ def search(request):
     return render(request, 'main/search.html', {"form": form})
 
 
+def summarise_nltk(request, clean_text, min_ton, max_ton):
+    nltk_analyse = None
+    if request.FILES:
+        nltk_analyse = NLTKAnalyse(request.FILES['file'], True, min_ton, max_ton)
+    elif clean_text:
+        nltk_analyse = NLTKAnalyse(clean_text, False, min_ton, max_ton)
+    return nltk_analyse
+
+
 def nltk_ton(request):
     if request.method == 'POST':
         if request.FILES:
@@ -135,27 +145,34 @@ def nltk_ton(request):
             if clean_data['max_ton'] == '':
                 max_ton = 100
 
-            if request.FILES:
-                nltk_analyse = NLTKAnalyse(request.FILES['file'], True, min_ton, max_ton)
-            elif clean_text:
-                nltk_analyse = NLTKAnalyse(clean_text, False, min_ton, max_ton)
+            nltk_analyse = summarise_nltk(request, clean_text, min_ton, max_ton)
+            if not nltk_analyse:
+                data = {
+                    'form': form,
+                    'info': 'Введіть текст або оберіть файл',
+                }
+                return render(request, 'main/nltk_ton.html', data)
 
             nltk_analyse.at_start()
 
-            every_ton = nltk_analyse.get_every_analyse()
+            totalX, totalY = nltk_analyse.get_every_analyse()
 
             clean_text = "Загальна тональність тексту (без урахування обмежень): " + "%.2f" % nltk_analyse.aver_percent + ' %' + '<br><br>'
-            clean_text += every_ton
+            clean_text += 'Діаграму створено'
             clean_text = mark_safe(clean_text)
+            chart_data = {'totalX': totalX, 'totalY': totalY}
+            chart_data_json = dumps(chart_data)
 
             data = {
                 'form': form,
                 'info': clean_text,
+                'data': chart_data_json,
             }
         else:
             data = {
                 'form': NLTKForm(),
                 'info': form.errors,
+                'data': dumps({'totalX': [], 'totalY': []}),
             }
         return render(request, 'main/nltk_ton.html', data)
     else:
