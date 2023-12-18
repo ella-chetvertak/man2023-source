@@ -1,4 +1,4 @@
-import re, random, os, codecs, csv, pymorphy3
+import re, random, os, codecs, csv, pymorphy3, pathlib
 from operator import itemgetter
 from nltk.tokenize import sent_tokenize
 
@@ -150,8 +150,8 @@ class TextAnalyser:
             else:
                 if element != '':
                     results += element + ', '
-                    mr = morph.parse(element)[0]
-                    print(element, mr.normal_form)
+                    # mr = morph.parse(element)[0]
+                    # print(element, mr.normal_form)
         self.resultsRare = results
 
     def search_ctx(self, req):
