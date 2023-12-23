@@ -46,6 +46,7 @@ class NLTKAnalyse:
         totalY = [0 for _ in range(-100, 101, 10)]
         totalX = [f'{i} %' for i in range(-100, 101, 10)]
         all_polarities = []
+        total = "<table><tr><td>Частина тексту</td><td>Тональність</td></tr>"
         for sentence in self.sentences:
             words = word_tokenize(sentence)
             without_stop_words = [word for word in words if word not in stop_words]
@@ -55,13 +56,15 @@ class NLTKAnalyse:
                 normal_words.append(p.normal_form)
 
             polarity = round(SIA.polarity_scores(' '.join(normal_words))["compound"]*10)*10
+            totalY[totalX.index(f'{polarity} %')] += 1
             if int(self.max) >= int(polarity) >= int(self.min):
-                totalY[totalX.index(f'{polarity} %')] += 1
+                total += f"<tr><td>{sentence}</td><td>{polarity}</td></tr>"
             all_polarities.append(polarity)
+        total += "</table>"
 
         if len(all_polarities) != 0:
             self.aver_polarity = sum(all_polarities)/(len(all_polarities)*100)
         else:
             self.aver_polarity = 0
         self.aver_percent = self.aver_polarity * 100
-        return totalX, totalY
+        return totalX, totalY, total

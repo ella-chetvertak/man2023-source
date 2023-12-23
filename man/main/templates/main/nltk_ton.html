@@ -9,6 +9,8 @@
             {{ form.text }}
             <p class="file-info"></p>
             {{ form.file }}
+            <p>Програма завжди виводить діаграму без урахування заданих обмежень. Вони діють лише на ті речення, що користувач хоче побачити у вигляді таблиці.</p>
+            <p>Введіть проміжок значення тональності речень, що будуть виводитися у вигляді таблиці:</p><br>
             {{ form.min_ton.label }}
             {{ form.min_ton }}
             {{ form.max_ton.label }}
@@ -16,9 +18,8 @@
 
             <button type="submit">Аналізувати</button>
         </form>
-        <p class="results">{{ info }}</p>
         <canvas id="dataChart" aria-label="mood graph" role="img"></canvas>
-        <p></p>
+        <p class="results">{{ info }}</p>
     </div>
 {% endblock %}
 {% block misc_js %}

@@ -155,10 +155,10 @@ def nltk_ton(request):
 
             nltk_analyse.at_start()
 
-            totalX, totalY = nltk_analyse.get_every_analyse()
+            totalX, totalY, total = nltk_analyse.get_every_analyse()
 
             clean_text = "Загальна тональність тексту (без урахування обмежень): " + "%.2f" % nltk_analyse.aver_percent + ' %' + '<br><br>'
-            clean_text += 'Діаграму створено'
+            clean_text += total
             clean_text = mark_safe(clean_text)
             chart_data = {'totalX': totalX, 'totalY': totalY}
             chart_data_json = dumps(chart_data)
