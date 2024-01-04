@@ -55,6 +55,12 @@ input.minmax-input {
 .display-row {
     display: flex;
     flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.display-row input {
+    margin-bottom: 0;
+    margin-right: 5px;
 }
 
 table {

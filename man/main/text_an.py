@@ -33,7 +33,10 @@ class TextAnalyser:
             file.close()
             os.remove(f"{randkey}.txt")
         else:
-            self.text = sent_tokenize(data)
+            split = data.splitlines()
+            for elem in split:
+                for sent in sent_tokenize(elem):
+                    self.text.append(sent)
 
         for i in range(len(self.text)):
             lst = self.text[i].split(" ")
@@ -153,7 +156,7 @@ class TextAnalyser:
         self.resultsRare = results
 
     def search_ctx(self, req, wcase):
-        idx = [x[0] for x in enumerate(self.cleanArr) if x[1] == req.casefold()]
+        idx = [x[0] for x in enumerate(self.cleanArr) if x[1].casefold() == req.casefold()]
         self.resCtx = ""
         for elem in idx:
             # запис
