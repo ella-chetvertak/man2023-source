@@ -52,6 +52,11 @@ input.minmax-input {
     width: 50px;
 }
 
+.display-row {
+    display: flex;
+    flex-direction: row;
+}
+
 table {
     table-layout: fixed;
     border-collapse: collapse;

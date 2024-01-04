@@ -150,12 +150,10 @@ class TextAnalyser:
             else:
                 if element != '':
                     results += element + ', '
-                    # mr = morph.parse(element)[0]
-                    # print(element, mr.normal_form)
         self.resultsRare = results
 
-    def search_ctx(self, req):
-        idx = [x[0] for x in enumerate(self.cleanArr) if x[1] == req]
+    def search_ctx(self, req, wcase):
+        idx = [x[0] for x in enumerate(self.cleanArr) if x[1] == req.casefold()]
         self.resCtx = ""
         for elem in idx:
             # запис
@@ -164,5 +162,8 @@ class TextAnalyser:
             except IndexError:
                 print('Biective ruined')
                 resOne = ''
-            if resOne not in self.resCtx:
-                self.resCtx += resOne + "<br><br>"
+            if (resOne not in self.resCtx):
+                if wcase and req in resOne:
+                    self.resCtx += resOne + "<br><br>"
+                elif not wcase:
+                    self.resCtx += resOne + "<br><br>"

@@ -1,4 +1,4 @@
-from django.forms import Form, Textarea, TextInput, CharField, FileField, RadioSelect
+from django.forms import Form, Textarea, TextInput, CharField, FileField, RadioSelect, BooleanField, CheckboxInput
 from .validators import validate_file_extension, validate_file_size
 
 
@@ -19,6 +19,7 @@ class TextForm(MainForm):
 
 class SearchForm(MainForm):
     name = CharField(widget=TextInput(), label='Пошуковий запит')
+    check_case = BooleanField(label="Враховувати регістр", required=False)
 
 
 class NLTKForm(MainForm):

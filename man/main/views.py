@@ -81,6 +81,7 @@ def search(request):
 
         if form.is_valid():
             clean_text = form.cleaned_data['text']
+            wcase = form.cleaned_data['check_case']
             clean_data = form.cleaned_data
             group_size = int(request.COOKIES.get('group_size'))
             freq = int(request.COOKIES.get('freq'))
@@ -95,9 +96,10 @@ def search(request):
             text_analyse.at_start()
 
             name = clean_data['name']
-            text_analyse.search_ctx(name)
+            text_analyse.search_ctx(name, wcase)
             clean_text = text_analyse.resCtx
-            all_entries = set(re.findall(fr'(?i){name}', clean_text))
+            all_entries = set(re.findall(fr'{"(?i)"*(not wcase)}{name}', clean_text))
+
             for elem in all_entries:
                 clean_text = re.sub(elem, f'<mark>{elem}</mark>', clean_text)
             clean_text = mark_safe(clean_text)
