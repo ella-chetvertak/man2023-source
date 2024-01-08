@@ -5,7 +5,7 @@ from nltk.corpus import stopwords
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import codecs, random, os
 
-nltk.data.path.extend(["C:\\front end 13 08\\djangoMAN/nltk_data", "/home/olegchetvertak/man2023-source/nltk_data"])
+nltk.data.path.extend(["C:\\front end 01 07\\man2023-source/nltk_data", "/home/olegchetvertak/man2023-source/nltk_data"])
 
 morph = pymorphy3.MorphAnalyzer(lang='uk')
 stopwords = stopwords.words("ukrainian")
