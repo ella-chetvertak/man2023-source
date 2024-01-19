@@ -1,11 +1,12 @@
 import nltk, string, pymorphy3
-from nltk import pos_tag
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import codecs, random, os
+from pathlib import Path
 
-nltk.data.path.extend(["C:\\front end 01 07\\man2023-source/nltk_data", "/home/olegchetvertak/man2023-source/nltk_data"])
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+nltk.data.path.extend([str(BASE_DIR) + "/nltk_data", "/home/olegchetvertak/man2023-source/nltk_data"])
 
 morph = pymorphy3.MorphAnalyzer(lang='uk')
 stopwords = stopwords.words("ukrainian")
@@ -46,7 +47,7 @@ class NLTKAnalyse:
         totalY = [0 for _ in range(-100, 101, 10)]
         totalX = [f'{i} %' for i in range(-100, 101, 10)]
         all_polarities = []
-        total = "<table><tr><td>Частина тексту</td><td>Тональність</td></tr>"
+        total = "<table><tr><td>Частина тексту</td><td>Тональність, %</td></tr>"
         for sentence in self.sentences:
             words = word_tokenize(sentence)
             without_stop_words = [word for word in words if word not in stop_words]

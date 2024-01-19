@@ -1,4 +1,4 @@
-import re, random, os, codecs, csv, pymorphy3, pathlib
+import re, random, os, codecs, pymorphy3
 from operator import itemgetter
 from nltk.tokenize import sent_tokenize
 
@@ -163,8 +163,7 @@ class TextAnalyser:
             try:
                 resOne = self.text[self.ctxLineArr[elem]]
             except IndexError:
-                print('Biective ruined')
-                resOne = ''
+                resOne = 'На жаль, щось пішло не так'
             if (resOne not in self.resCtx):
                 if wcase and req in resOne:
                     self.resCtx += resOne + "<br><br>"
