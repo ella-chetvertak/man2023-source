@@ -21,14 +21,18 @@ def index(request):
 
 def summarise(request, clean_text, group_size, freq):
     text_analyse = None
+    randkey = request.COOKIES.get("randkey")
     if request.FILES:
-        text_analyse = TextAnalyser(request.FILES['file'], True, group_size, freq)
+        text_analyse = TextAnalyser(request.FILES['file'], True, group_size, freq, randkey)
+    elif randkey:
+        text_analyse = TextAnalyser(None, False, group_size, freq, randkey)
     elif clean_text:
-        text_analyse = TextAnalyser(clean_text, False, group_size, freq)
+        text_analyse = TextAnalyser(clean_text, False, group_size, freq, None)
     return text_analyse
 
 
 def often(request):
+    randkey = None
     if request.method == 'POST':
         if request.FILES:
             form = TextForm(request.POST, request.FILES)
@@ -47,7 +51,7 @@ def often(request):
                 }
                 return render(request, 'main/often.html', data)
 
-            text_analyse.at_start()
+            randkey = text_analyse.at_start()
 
             if clean_data['rad'] == '1':
                 text_analyse.analyse_popular()
@@ -65,7 +69,10 @@ def often(request):
                 'form': TextForm(),
                 'info': form.errors,
             }
-        return render(request, 'main/often.html', data)
+        response = render(request, 'main/often.html', data)
+        if randkey:
+            response.set_cookie('randkey', randkey, max_age=3600)
+        return response
     else:
         form = TextForm(initial={'rad': '1'})
 
@@ -73,6 +80,7 @@ def often(request):
 
 
 def search(request):
+    randkey = None
     if request.method == 'POST':
         if request.FILES:
             form = SearchForm(request.POST, request.FILES)
@@ -93,7 +101,7 @@ def search(request):
                 }
                 return render(request, 'main/search.html', data)
 
-            text_analyse.at_start()
+            randkey = text_analyse.at_start()
 
             name = clean_data['name']
             text_analyse.search_ctx(name, wcase)
@@ -113,7 +121,10 @@ def search(request):
                 'form': SearchForm(),
                 'info': form.errors,
             }
-        return render(request, 'main/search.html', data)
+        response = render(request, 'main/search.html', data)
+        if randkey:
+            response.set_cookie('randkey', randkey, max_age=3600)
+        return response
     else:
         form = SearchForm()
 
@@ -122,14 +133,18 @@ def search(request):
 
 def summarise_nltk(request, clean_text, min_ton, max_ton):
     nltk_analyse = None
+    randkey = request.COOKIES.get("randkey")
     if request.FILES:
-        nltk_analyse = NLTKAnalyse(request.FILES['file'], True, min_ton, max_ton)
+        nltk_analyse = NLTKAnalyse(request.FILES['file'], True, min_ton, max_ton, randkey)
+    elif randkey:
+        nltk_analyse = NLTKAnalyse(None, False, min_ton, max_ton, randkey)
     elif clean_text:
-        nltk_analyse = NLTKAnalyse(clean_text, False, min_ton, max_ton)
+        nltk_analyse = NLTKAnalyse(clean_text, False, min_ton, max_ton, None)
     return nltk_analyse
 
 
 def nltk_ton(request):
+    randkey = None
     if request.method == 'POST':
         if request.FILES:
             form = NLTKForm(request.POST, request.FILES)
@@ -155,7 +170,7 @@ def nltk_ton(request):
                 }
                 return render(request, 'main/nltk_ton.html', data)
 
-            nltk_analyse.at_start()
+            randkey = nltk_analyse.at_start()
 
             totalX, totalY, total = nltk_analyse.get_every_analyse()
 
@@ -176,7 +191,10 @@ def nltk_ton(request):
                 'info': form.errors,
                 'data': dumps({'totalX': [], 'totalY': []}),
             }
-        return render(request, 'main/nltk_ton.html', data)
+        response = render(request, 'main/nltk_ton.html', data)
+        if randkey:
+            response.set_cookie('randkey', randkey, max_age=3600)
+        return response
     else:
         form = NLTKForm()
 

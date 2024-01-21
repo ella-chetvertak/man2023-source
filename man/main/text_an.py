@@ -6,7 +6,7 @@ morph = pymorphy3.MorphAnalyzer(lang='uk')
 
 
 class TextAnalyser:
-    def __init__(self, data, with_file, group_size, freq):
+    def __init__(self, data, with_file, group_size, freq, randkey):
         self.resultsPop = []
         self.resultsRare = []
         self.resCtx = ''
@@ -18,20 +18,29 @@ class TextAnalyser:
         self.withFile = with_file
         self.groupSize = group_size
         self.elemFreq = freq
+        self.randkey = randkey
 
     def filter_text(self, data):
         wordsArr = []
         self.text = []
         self.ctxLineArr = []
-        randkey = random.randint(100000, 999999)
+        randkey = None
         if self.withFile:
+            with open("keycounter.txt", "r") as keycounter:
+                prevkey = int(keycounter.read())
+                randkey = prevkey + 1
+            with open("keycounter.txt", "w") as keycounter:
+                keycounter.write(f"{randkey}")
             with open(f"{randkey}.txt", "wb+") as file:
                 for chunk in data.chunks():
                     file.write(chunk)
             file = codecs.open(f"{randkey}.txt", "r", "utf-8")
             self.text = file.read().splitlines()
             file.close()
-            os.remove(f"{randkey}.txt")
+        elif self.randkey:
+            file = codecs.open(f"{self.randkey}.txt", "r", "utf-8")
+            self.text = file.read().splitlines()
+            file.close()
         else:
             split = data.splitlines()
             for elem in split:
@@ -85,9 +94,10 @@ class TextAnalyser:
         self.cleanArr = flatArr
         self.sortedArr = sorted(flatArr)
         self.sortedArr.append('')
+        return randkey
 
     def at_start(self):
-        self.filter_text(self.data)
+        return self.filter_text(self.data)
 
     def analyse_popular(self):
         word = []

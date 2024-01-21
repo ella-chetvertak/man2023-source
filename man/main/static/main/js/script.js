@@ -1,8 +1,7 @@
 const textarea = document.getElementById("textar")
 const fileButton = document.getElementById("filear")
+const submitButton = document.getElementById("submit")
 const para = document.querySelector('.file-info')
-
-para.textContent = 'Файл не обрано'
 
 if (textarea) {
 textarea.addEventListener('input', function() {
@@ -14,6 +13,13 @@ textarea.addEventListener('input', function() {
 })
 }
 
+function getCookie(name) {
+    let matches = document.cookie.match(new RegExp(
+      "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
 if (fileButton) {
 fileButton.addEventListener('change', function() {
     if (this.value) {
@@ -21,17 +27,29 @@ fileButton.addEventListener('change', function() {
     } else {
         textarea.disabled = false
     }
-    
+
     const curFiles = fileButton.files
 
-    if (curFiles.length === 0) {
-        para.textContent = 'Файл не обрано'
-    } else {
+    if (curFiles.length) {
         para.textContent = `Обрано файл ${curFiles[0].name}`
     }
 })}
-// window.addEventListener('contextmenu', (e) => {
-//     e.preventDefault()
-//     console.log(window.getSelection().toString())
-//     return false
-// })
+
+if (submitButton) {
+submitButton.addEventListener('click', function() {
+    const curFiles = fileButton.files
+
+    if (curFiles.length) {
+        document.cookie = `filename=${curFiles[0].name};max-age=3600`
+    }
+})
+}
+
+if (para) {
+    let filename = getCookie("filename")
+    if (filename) {
+        para.textContent = `Обрано файл ${filename}`
+    } else {
+        para.textContent = "Файл не обрано"
+    }
+}

@@ -16,7 +16,7 @@ stop_words = frozenset(stopwords + list(string.punctuation))
 
 
 class NLTKAnalyse:
-    def __init__(self, data, with_file, min_ton, max_ton):
+    def __init__(self, data, with_file, min_ton, max_ton, randkey):
         self.sentences = []
         self.aver_polarity = 0
         self.aver_percent = 0
@@ -24,21 +24,30 @@ class NLTKAnalyse:
         self.max = max_ton
         self.withFile = with_file
         self.data = data
+        self.randkey = randkey
 
     def filter_text(self):
-        randkey = random.randint(100000, 999999)
-        if self.withFile:
-            with open(f"{randkey}.txt", "wb+") as file:
-                for chunk in self.data.chunks():
-                    file.write(chunk)
-            file = codecs.open(f"{randkey}.txt", "r", "utf-8")
+        randkey = None
+        if self.withFile or self.randkey:
+            if self.withFile:
+                with open("keycounter.txt", "r") as keycounter:
+                    prevkey = int(keycounter.read())
+                    randkey = prevkey + 1
+                with open("keycounter.txt", "w") as keycounter:
+                    keycounter.write(f"{randkey}")
+                with open(f"{randkey}.txt", "wb+") as file:
+                    for chunk in self.data.chunks():
+                        file.write(chunk)
+                file = codecs.open(f"{randkey}.txt", "r", "utf-8")
+            elif self.randkey:
+                file = codecs.open(f"{self.randkey}.txt", "r", "utf-8")
             parts = file.read().splitlines()
             for elem in parts:
                 self.sentences.extend(sent_tokenize(elem))
             file.close()
-            os.remove(f"{randkey}.txt")
         else:
             self.sentences = sent_tokenize(self.data)
+        return randkey
 
     def at_start(self):
         self.filter_text()
