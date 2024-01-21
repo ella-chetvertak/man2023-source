@@ -145,7 +145,10 @@ class TextAnalyser:
                 elemCount = 1
             prevElem = elem
 
-        results = ""
+        results = f"Усього слів у тексті з частотою вживання {self.elemFreq}: {len(rareWords)}<br>"
+        results += f"Відсоток кількості слів у тексті з частотою вживання {self.elemFreq} до кількості усіх слів: {round(len(rareWords) / len(self.sortedArr)*100, 5)} %<br>"
+        results += f"Повний список слів у тексті з частотою вживання {self.elemFreq}:<br><br>"
+        
         for element in rareWords:
             res1 = re.findall(r'[A-Za-z\-]', element)
             if len(res1) < len(element) and len(res1) != 0 and list(set(res1)) != ['-']:

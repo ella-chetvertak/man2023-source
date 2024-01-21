@@ -54,7 +54,7 @@ def often(request):
                 clean_text = mark_safe(text_analyse.resultsPop)
             elif clean_data['rad'] == '2':
                 text_analyse.analyse_rare()
-                clean_text = text_analyse.resultsRare
+                clean_text = mark_safe(text_analyse.resultsRare)
 
             data = {
                 'form': form,
@@ -234,3 +234,7 @@ def settings(request):
     else:
         form = SettingsForm()
     return render(request, 'main/settings.html', {"form": form})
+
+
+def about(request):
+    return render(request, 'main/about.html')
