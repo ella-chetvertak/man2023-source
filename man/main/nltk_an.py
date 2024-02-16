@@ -50,7 +50,7 @@ class NLTKAnalyse:
         return randkey
 
     def at_start(self):
-        self.filter_text()
+        return self.filter_text()
 
     def get_every_analyse(self):
         totalY = [0 for _ in range(-100, 101, 10)]
